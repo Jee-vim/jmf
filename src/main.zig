@@ -1,9 +1,9 @@
 const std = @import("std");
 
-fn renamed(dir_name: []const u8, i_name: @TypeOf(dir_name)) !void {
+fn renamed(i_name: []const u8) !void {
     const allocator = std.heap.page_allocator;
 
-    var dir = try std.fs.cwd().openDir(dir_name, .{ .iterate = true });
+    var dir = try std.fs.cwd().openDir("./", .{ .iterate = true });
     defer dir.close();
     var dir_iterator = dir.iterate();
 
@@ -16,6 +16,8 @@ fn renamed(dir_name: []const u8, i_name: @TypeOf(dir_name)) !void {
 
     for (file_list.items) |name| {
         const new_name = try std.fmt.allocPrint(allocator, "{s}-{s}", .{ i_name, name });
+        defer allocator.free(new_name);
+
         try std.fs.cwd().rename(name, new_name);
         std.debug.print("old name: {s}, new name: {s}\n", .{ name, new_name });
     }
@@ -32,5 +34,5 @@ pub fn main() !void {
         return;
     }
 
-    try renamed(args[1], args[2]);
+    try renamed(args[1]);
 }
