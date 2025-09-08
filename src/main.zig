@@ -1,9 +1,9 @@
 const std = @import("std");
 
-fn renamed(i_name: []const u8) !void {
+fn renamed(dir_name: []const u8, i_name: @TypeOf(dir_name)) !void {
     const allocator = std.heap.page_allocator;
 
-    var dir = try std.fs.cwd().openDir(".", .{ .iterate = true });
+    var dir = try std.fs.cwd().openDir(dir_name, .{ .iterate = true });
     defer dir.close();
     var dir_iterator = dir.iterate();
 
@@ -27,8 +27,10 @@ pub fn main() !void {
     const args = try std.process.argsAlloc(allocator);
     defer allocator.free(args);
 
-    for (args[1..5]) |arg| {
-        try std.debug.print("{s}", .{arg});
-        // try renamed(arg);
+    if (args.len < 3) {
+        std.debug.print("Usage: jren <src> <renamed>\n", .{});
+        return;
     }
+
+    try renamed(args[1], args[2]);
 }
