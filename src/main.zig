@@ -27,7 +27,8 @@ pub fn main() !void {
     const args = try std.process.argsAlloc(allocator);
     defer allocator.free(args);
 
-    for (args[1..]) |arg| {
-        try renamed(arg);
+    for (args[1..5]) |arg| {
+        try std.debug.print("{s}", .{arg});
+        // try renamed(arg);
     }
 }
