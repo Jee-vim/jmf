@@ -29,8 +29,8 @@ pub fn main() !void {
     const args = try std.process.argsAlloc(allocator);
     defer allocator.free(args);
 
-    if (args.len < 3) {
-        std.debug.print("Usage: jren <src> <renamed>\n", .{});
+    if (args.len < 2) {
+        std.debug.print("Usage: jren <renamed>\n", .{});
         return;
     }
 
