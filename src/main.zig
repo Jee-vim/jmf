@@ -1,9 +1,9 @@
 const std = @import("std");
-const rn = @import("utils/renamed.zig");
+const lib = @import("utils/lib.zig");
 
 const Opt = struct {
     add_name: []const u8,
-    rmv_name: []const u8,
+    rmv_name: ?[]const u8,
 };
 
 fn manipulationFile(opt: Opt) !void {
@@ -24,16 +24,15 @@ fn manipulationFile(opt: Opt) !void {
         const new_name = try std.fmt.allocPrint(allocator, "{s}{s}", .{ opt.add_name, file_name });
         defer allocator.free(new_name);
 
-        const rmv = opt.rmv_name;
-        if (rmv.len > 0) {
+        if (opt.rmv_name) |rmv| {
             const size = std.mem.replacementSize(u8, file_name, rmv, "");
-            const new_output = try allocator.alloc(u8, size);
-            defer allocator.free(new_output);
-            _ = std.mem.replace(u8, file_name, rmv, "", new_output);
+            const removed_name = try allocator.alloc(u8, size);
+            defer allocator.free(removed_name);
+            _ = std.mem.replace(u8, file_name, rmv, "", removed_name);
 
-            try rn.rename(.{ .file_name = file_name, .output = new_output });
+            try lib.rename(.{ .file_name = file_name, .output = removed_name });
         } else {
-            try rn.rename(.{ .file_name = file_name, .output = new_name });
+            try lib.rename(.{ .file_name = file_name, .output = new_name });
         }
     }
 }
@@ -44,7 +43,15 @@ pub fn main() !void {
     const args = try std.process.argsAlloc(allocator);
     defer allocator.free(args);
 
-    manipulationFile(.{ .add_name = args[1], .rmv_name = args[2] }) catch |err| {
-        std.debug.print("error: {s}", .{@errorName(err)});
+    if (args.len < 2) {
+        std.debug.print("usage: jren <added_name> [removed_name]\n", .{});
+        return;
+    }
+
+    const add_name = args[1];
+    const rmv_name = if (args.len > 2) args[2] else null;
+
+    manipulationFile(.{ .add_name = add_name, .rmv_name = rmv_name }) catch |err| {
+        std.debug.print("error: {s}\n", .{@errorName(err)});
     };
 }
