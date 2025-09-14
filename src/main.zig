@@ -22,8 +22,8 @@ pub fn main() !void {
     }
 
     if (args.len < 2) {
-        std.debug.print("Usage: mf <command> <value>\n", .{});
-        std.debug.print("Ex: mf -a test-\n", .{});
+        std.debug.print("Usage: jmf <command> <value>\n", .{});
+        std.debug.print("Ex: jmf -a test-\n", .{});
         return;
     }
 
