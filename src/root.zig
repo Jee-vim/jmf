@@ -24,7 +24,7 @@ pub fn manipulationFile(opt: SmF) !void {
 
     for (file_list.items) |file_name| {
         var current_name = file_name;
-        var allocated: ?[]u8 = null;
+        var allocated: ?[]const u8 = null;
 
         if (opt.add_name) |val| {
             const added = try std.fmt.allocPrint(allocator, "{s}{s}", .{ val, current_name });
