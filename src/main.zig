@@ -1,5 +1,5 @@
 const std = @import("std");
-const lib = @import("utils/lib.zig");
+const jmf = @import("root.zig");
 
 pub fn main() !void {
     const allocator = std.heap.page_allocator;
@@ -27,7 +27,7 @@ pub fn main() !void {
         return;
     }
 
-    lib.manipulationFile(.{ .add_name = add_name, .rmv_name = rmv_name }) catch |err| {
+    jmf.manipulationFile(.{ .add_name = add_name, .rmv_name = rmv_name }) catch |err| {
         std.debug.print("error: {s}\n", .{@errorName(err)});
     };
 }
